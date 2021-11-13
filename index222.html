@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CH">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #canvas {
+        border: 1px black solid;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="400" height="300"></canvas>
+    <script>
+      function getImgByPath(path) {
+        let img = new Image()
+        img.src = path
+        return img
+      }
+      paddle = {
+        image: getImgByPath('./panel.png'),
+        x: 100,
+        y: 250,
+        speed: 10,
+        moveLeft() {
+          this.x = this.x - this.speed
+        },
+        moveRight() {
+          this.x = this.x + this.speed
+        },
+      }
+
+      class Game {
+        constructor(canvasElement) {
+          this.canvas = canvasElement
+          this.context = this.canvas.getContext('2d')
+          this.initEngine()
+          this.initEventsListener()
+        }
+        actions = {}
+        keyDowns = {}
+        // draw
+        drawImage = (material) => {
+          this.context.drawImage(material.image, material.x, material.y)
+        }
+        //events
+        initEventsListener = () => {
+          globalThis.addEventListener('keydown', (event) => {
+            this.keyDowns[event.key] = true
+            console.log(this.keyDowns)
+            console.log(this.actions)
+          })
+          globalThis.addEventListener('keyup', (event) => {
+            this.keyDowns[event.key] = false
+          })
+        }
+        // registerAction
+        registerAction = (key, callback) => {
+          this.actions[key] = callback
+        }
+        // engine
+        initEngine = () => {
+          // TODO:Object.keys提到外面试试
+          setInterval(() => {
+            console.log('actions', this.actions)
+            console.log('keyDowns', this.keyDowns)
+
+            Object.keys(this.actions).forEach((key) => {
+              if (this.keyDowns[key]) {
+                this.actions[key]()
+              }
+            })
+            this.update()
+            this.clear()
+            this.draw()
+          }, 1000 / 120)
+        }
+        // update
+        update() {}
+        clear() {
+          this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+        draw() {
+          this.drawImage(paddle)
+        }
+      }
+      game = new Game(canvas)
+      game.registerAction('d', () => {
+        paddle.moveRight()
+      })
+      game.registerAction('a', () => {
+        paddle.moveLeft()
+      })
+    </script>
+  </body>
+</html>
