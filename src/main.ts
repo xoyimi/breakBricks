@@ -12,6 +12,7 @@ let images = [
   { name: 'coin', src: getImageUrl('coin.png') },
   { name: 'block', src: getImageUrl('block.png') },
 ]
-
-await ResourceManager.imagesLoader(images)
-Game.getInstance(document.getElementById('canvas') as HTMLCanvasElement, 30)
+;(async () => {
+  await ResourceManager.imagesLoader(images)
+  Game.getInstance(document.getElementById('canvas') as HTMLCanvasElement, 30)
+})()

@@ -38,7 +38,7 @@ export default class PlaySense extends Sense {
     })
     document
       .getElementsByClassName('rangeInput')[0]
-      .addEventListener('input', (event) => {
+      .addEventListener('input', (event: any) => {
         if (this.ball.speedX < 0) {
           this.ball.speedX = -event?.target?.value / 10
         } else {
