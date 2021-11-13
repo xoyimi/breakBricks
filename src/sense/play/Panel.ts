@@ -1,10 +1,11 @@
 import type Game from '../../js/Game'
+import ResourceManager from '../../utils/resourceManager'
 
 export default class Panel {
   game: Game
-  posX = 0
-  posY = 0
-  speed = 1
+  x = 250
+  y = 350
+  speed = 4
   img
   width
   height
@@ -16,14 +17,15 @@ export default class Panel {
 
   constructor(game: Game) {
     this.game = game
-    this.img = game.getImage('panel')
-    this.width = this.img.width
-    this.height = this.img.height
-  }
-  moveLeft() {
-    this.posX < 0 && (this.posX += this.speed)
+    this.img = ResourceManager.getImage('panel')?.img as HTMLImageElement
+    this.width = 60
+    this.height = 15
+    console.log(this)
   }
   moveRight() {
-    this.posX < this.game.canvas.width + this.width && (this.posX -= this.speed)
+    this.x < this.game.canvas.width - this.width && (this.x += this.speed)
+  }
+  moveLeft() {
+    this.x > 0 && (this.x -= this.speed)
   }
 }

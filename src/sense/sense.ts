@@ -1,5 +1,9 @@
+import type Game from '../js/Game'
 export default abstract class Sense {
-  constructor() {
-    
+  game: Game
+  constructor(game: Game) {
+    this.game = game
   }
+  abstract update(): void
+  abstract draw(): void
 }

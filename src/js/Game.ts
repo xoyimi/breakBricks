@@ -1,17 +1,19 @@
-import ResourceLoader from '../utils/ResourceManager'
-import Sense from '../sense/sense'
+import PlaySense from '../sense/play/sense'
+
+import type Sense from '../sense/sense'
 
 export default class Game {
   static instance: Game
   canvas: HTMLCanvasElement
-  _ctx: CanvasRenderingContext2D
+  ctx: CanvasRenderingContext2D
   sense: Sense
   images: { [key: string]: HTMLImageElement } = {}
   actions: any = {}
   keyDowns: any = {}
   constructor(canvas: HTMLCanvasElement, fpx: number = 30) {
     this.canvas = canvas
-    this._ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+    this.sense = PlaySense.getInstance(this)
 
     // event listeners
     window.addEventListener('keydown', (event) => {
@@ -20,37 +22,29 @@ export default class Game {
     window.addEventListener('keyup', (event) => {
       this.keyDowns[event.key] = false
     })
-    this.init()
+    this.update()
   }
   static getInstance(canvas: HTMLCanvasElement, fpx: number = 30) {
     this.instance = this.instance || new Game(canvas, fpx)
     return this.instance
   }
 
-  drawImage(image, x, y) {}
   update() {
-    this.sense.update()
-  }
-  draw() {
-    this.sense.draw()
-  }
-  init() {
-    let counts = 0
-  }
-
-  renderLoop() {
     Object.keys(this.actions).forEach((key) => {
       if (this.keyDowns[key]) {
         this.actions[key]()
       }
     })
-    this.update()
-    this._ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.draw()
-    requestAnimationFrame(this.renderLoop.bind(this))
+    this.sense.update()
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.sense.draw()
+    requestAnimationFrame(this.update.bind(this))
   }
-  registerAction(key, callback) {
+  registerAction(key: string, callback: () => void) {
     this.actions[key] = callback
+  }
+  cancelAction(key: string) {
+    this.actions[key] = null
   }
 
   transitionSense(sense) {
